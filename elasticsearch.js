@@ -1,53 +1,56 @@
+require("dotenv").config();
+
 const { Client } = require("@elastic/elasticsearch");
 const client = new Client({
-  node: "https://79df44ca145e404a82aaf5a6c6228842.eastus.azure.elastic-cloud.com:443",
+  node: process.env.ELASTICSEARCH_NODE,
   auth: {
-    apiKey: "VW05ZmFZNEJMQmFXcldoMWcyNy06ZWtGQkRlUFNSc2lPcWQ5bFhSWDhWUQ==",
+    apiKey: process.env.ELASTICSEARCH_API_KEY,
   },
 });
-async function createIndex() {
-  // Check if the index exists
-  const { body: indexExists } = await client.indices.exists({
-    index: "nyc-events-embeddings",
-  });
 
-  // If the index exists, delete it
-  if (indexExists) {
-    await client.indices.delete({
-      index: "nyc-events-embeddings"
+async function createIndex(indexName) {
+  try {
+    // Check if the index already exists
+    const { body: indexExists } = await client.indices.exists({
+      index: indexName,
     });
-    console.log("dropped existing index.");
-  }
-  await client.indices.create(
-    {
-      index: "nyc-events-embeddings",
-      body: {
-        mappings: {
-          properties: {
-            title: { type: "text" },
-            date: { type: "date" },
-            location_description: { type: "text" },
-            snippet: { type: "text" },
-            embedding: { type: "dense_vector", dims: 1536 }, // ada-002 model produces 1024-dimensional embeddings
+
+    if (!indexExists) {
+      // If the index doesn't exist, create it
+      await client.indices.create({
+        index: indexName, //"nyc-events-embeddings",
+        body: {
+          mappings: {
+            properties: {
+              event_id: { type: "integer" },
+              title: { type: "text" },
+              content: { type: "text" },
+              contentHtml: { type: "text" },
+              date: { type: "date" },
+              location_description: { type: "text" },
+              snippet: { type: "text" },
+              embedding: { type: "dense_vector", dims: 1536 }, // ada-002 model produces 1024-dimensional embeddings
+            },
           },
         },
-      },
-    },
-    { ignore: [400] }
-  );
-
-  console.log("Index created successfully.");
+      });
+      console.log(`Index ${indexName} created.`);
+    } else {
+      console.log(`Index ${indexName} already exists.`);
+    }
+  } catch (error) {
+    console.error(`An error occurred while creating the index: ${error}`);
+  }
 }
 
-async function addRecord(data) {
+async function addRecord(data, indexName) {
   await client.index({
-    index: "nyc-events-embeddings",
-    body: data,
+    index: indexName, //"nyc-events-embeddings",
+    id: data.event_id,
+    document: data,
   });
 
   console.log("Record added successfully.");
 }
 
 module.exports = { createIndex, addRecord };
-
-//createIndex().catch(console.log);
