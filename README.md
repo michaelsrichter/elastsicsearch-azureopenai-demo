@@ -12,6 +12,8 @@ This project is a demonstration of the "On Your Data" integration between Elasti
 
 ## Introduction
 
+**NEW**: Read my [LinkedIn blog article](https://www.linkedin.com/pulse/how-i-built-ai-chatbot-elasticsearch-azure-3-hours-mike-liwae/?trackingId=817mTb30ShGbEexgWLvTsg%3D%3D) about how I built this demo!
+
 This repository contains the code needed for running a demo of the new [Elasticsearch support](https://www.elastic.co/search-labs/blog/azure-openai-on-your-data-Elasticsearch-vector-database) for the "On Your Data" feature of Azure OpenAI service. See the [announcement from Microsoft](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/azure-openai-service-expands-quot-on-your-data-quot-with/ba-p/4097023).
 
 ## Architecture
