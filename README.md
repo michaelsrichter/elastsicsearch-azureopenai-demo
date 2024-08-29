@@ -24,7 +24,7 @@ After cloning the repository, rename the `.env.sample` file to `.env` and update
 
 ## Usage
 
-Run `npm init` and then `node index.js {index-name} {data-file-location}`
+Run `npm install` and then `node index.js {index-name} {data-file-location}`
 
 To use the sample NYC Park events data included from the [NYC Open Data](https://opendata.cityofnewyork.us/) site, just call
 
